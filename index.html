@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gaurav — The Series</title>
+<meta name="description" content="Gaurav's portfolio, streaming now. Every project is an Original, every year is a season." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0b0b0f;
+    --ink-2: #141419;
+    --ink-3: #1f1f26;
+    --red: #e50914;
+    --red-2: #ff3b47;
+    --bone: #f5f3ef;
+    --mist: #b3b2b8;
+    --smoke: #77767e;
+    --green: #46d369;
+    --gutter: clamp(16px, 4vw, 56px);
+    --display: 'Bebas Neue', Impact, sans-serif;
+    --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--ink); scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--ink); color: var(--bone);
+    font-family: var(--sans); -webkit-font-smoothing: antialiased;
+    overflow-x: hidden; line-height: 1.5;
+  }
+  body.locked { overflow: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  ::selection { background: var(--red); color: #fff; }
+  :focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; border-radius: 4px; }
+  .gutter { padding-left: var(--gutter); padding-right: var(--gutter); }
+  .grain {
+    position: fixed; inset: -50%; z-index: 300; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 1s steps(4) infinite;
+  }
+  @keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-3%,2%)} 50%{transform:translate(2%,-3%)} 75%{transform:translate(-2%,-1%)} }
+
+  /* ---------- Opening ident ---------- */
+  #opening {
+    position: fixed; inset: 0; z-index: 200; background: #000;
+    display: grid; place-items: center; cursor: pointer;
+  }
+  .ident { position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
+  .ident-studio {
+    position: relative; z-index: 1; white-space: nowrap; padding-left: .5em; font-size: 12px; letter-spacing: .5em;
+    color: var(--mist); opacity: 0; animation: fadeUp .8s .2s var(--ease) forwards, fadeOut .5s 2s forwards;
+  }
+  .ident-letter {
+    font-family: var(--display); font-size: clamp(160px, 30vw, 300px); line-height: 1;
+    color: var(--red); text-shadow: 0 0 60px rgba(229,9,20,.55);
+    transform: scale(.4); opacity: 0;
+    animation: identIn 1.1s .5s var(--ease) forwards, identOut 1.1s 2.4s cubic-bezier(.7,0,.84,0) forwards;
+  }
+  .ident-letter::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, transparent 0 6px, rgba(0,0,0,.35) 6px 8px);
+    mix-blend-mode: multiply; opacity: 0; animation: fadeIn .4s 2.4s forwards;
+  }
+  .ident-skip { position: absolute; bottom: 28px; font-size: 12px; color: var(--smoke); letter-spacing: .1em; }
+  @keyframes identIn { to { transform: scale(1); opacity: 1; } }
+  @keyframes identOut { to { transform: scale(14); opacity: 0; filter: blur(4px); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes fadeOut { to { opacity: 0; } }
+
+  /* ---------- Who's watching ---------- */
+  #profiles {
+    position: fixed; inset: 0; z-index: 190; background: var(--ink);
+    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 40px;
+    padding: 24px;
+  }
+  #profiles.show { display: flex; animation: zoomIn .7s var(--ease); }
+  @keyframes zoomIn { from { opacity: 0; transform: scale(1.08); } to { opacity: 1; transform: none; } }
+  #profiles h1 { font-weight: 500; font-size: clamp(28px, 5vw, 52px); margin: 0; letter-spacing: -.01em; }
+  .profile-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(16px, 3vw, 36px); }
+  .profile-btn { display: flex; flex-direction: column; align-items: center; gap: 14px; width: clamp(100px, 18vw, 160px); }
+  .avatar {
+    width: 100%; aspect-ratio: 1; border-radius: 8px; position: relative; overflow: hidden;
+    outline: 3px solid transparent; outline-offset: 0; transition: outline-color .2s, transform .3s var(--ease);
+    display: grid; place-items: center;
+  }
+  .avatar svg { width: 62%; height: 62%; }
+  .profile-btn:hover .avatar, .profile-btn:focus-visible .avatar { outline-color: var(--bone); transform: scale(1.05); }
+  .profile-btn span { color: var(--mist); font-size: clamp(14px, 1.6vw, 18px); transition: color .2s; }
+  .profile-btn:hover span, .profile-btn:focus-visible span { color: var(--bone); }
+  .profile-btn:focus-visible { outline: none; }
+  .profile-grid:hover .profile-btn:not(:hover) .avatar { outline-color: transparent; transform: none; }
+  .profile-grid:hover .profile-btn:not(:hover) span { color: var(--mist); }
+  .profile-hint { color: var(--smoke); font-size: 14px; margin: -16px 0 0; text-align: center; }
+
+  /* ---------- Navbar ---------- */
+  #home { display: none; }
+  #home.show { display: block; animation: homeIn 1s var(--ease); }
+  @keyframes homeIn { from { opacity: 0; transform: scale(1.03); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+  nav.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 68px;
+    display: flex; align-items: center; gap: 32px;
+    background: linear-gradient(180deg, rgba(0,0,0,.75), transparent);
+    transition: background .4s;
+  }
+  nav.top.solid { background: rgba(11,11,15,.96); backdrop-filter: blur(8px); }
+  .wordmark { font-family: var(--display); font-size: 34px; color: var(--red); letter-spacing: .02em; line-height: 1; }
+  .nav-links { display: flex; gap: 20px; font-size: 14px; color: var(--mist); }
+  .nav-links a:hover, .nav-links a.active { color: var(--bone); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .nav-avatar { width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center; overflow: hidden; }
+  .nav-avatar svg { width: 70%; }
+  .switcher { position: relative; }
+  .switch-menu {
+    position: absolute; right: 0; top: 46px; min-width: 200px; background: rgba(11,11,15,.97);
+    border: 1px solid #333; border-radius: 6px; padding: 8px; display: none;
+  }
+  .switcher.open .switch-menu { display: block; }
+  .switch-menu button { display: flex; width: 100%; gap: 10px; align-items: center; padding: 8px; border-radius: 4px; font-size: 14px; text-align: left; }
+  .switch-menu button:hover { background: var(--ink-3); }
+  .switch-menu .nav-avatar { width: 28px; height: 28px; }
+  .menu-label { font-size: 11px; color: var(--smoke); padding: 4px 8px; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* ---------- Hero billboard ---------- */
+  /* padding-top keeps the banner text clear of the fixed top bar on short windows. */
+  /* The whole banner fits one screen: content is centred in the space below the top bar. */
+  .hero { position: relative; height: 100vh; height: 100svh; min-height: 560px; display: flex; align-items: center; padding-top: 76px; padding-bottom: 32px; overflow: hidden; isolation: isolate; }
+  .hero-bg { position: absolute; inset: 0; z-index: -1; }
+  .hero-bg .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; animation: drift 18s ease-in-out infinite alternate; }
+  .hero-bg .b1 { width: 60vw; height: 60vw; right: -10vw; top: -20vw; background: #7a0610; }
+  .hero-bg .b2 { width: 40vw; height: 40vw; right: 20vw; bottom: -10vw; background: #3a0a5a; animation-delay: -6s; }
+  .hero-bg .b3 { width: 30vw; height: 30vw; right: 5vw; top: 30vh; background: #b3390a; opacity: .35; animation-delay: -12s; }
+  @keyframes drift { to { transform: translate(-6vw, 4vw) scale(1.15); } }
+  .hero-bg .hero-type {
+    position: absolute; right: -2vw; top: 50%; transform: translateY(-50%);
+    font-family: var(--display); font-size: 44vw; line-height: .8; color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,.08); user-select: none; white-space: nowrap;
+  }
+  .hero-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(11,11,15,.95) 0%, rgba(11,11,15,.6) 45%, transparent 75%),
+                linear-gradient(0deg, var(--ink) 0%, transparent 35%);
+  }
+  .hero-content { max-width: 640px; }
+  .series-tag { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .35em; color: var(--mist); font-weight: 600; margin-bottom: 14px; }
+  .series-tag b { font-family: var(--display); font-size: 28px; color: var(--red); letter-spacing: 0; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400; font-size: clamp(68px, 11vw, 150px);
+    line-height: .86; margin: 0 0 14px; letter-spacing: .01em;
+    text-shadow: 0 10px 40px rgba(0,0,0,.5);
+  }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; font-size: 15px; color: var(--mist); margin-bottom: 16px; }
+  .meta .match { color: var(--green); font-weight: 700; }
+  .badge { border: 1px solid rgba(255,255,255,.4); padding: 0 6px; font-size: 12px; border-radius: 3px; color: var(--bone); }
+  .top10 { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--bone); }
+  .top10 i { font-style: normal; background: var(--red); font-size: 10px; line-height: 1; padding: 4px 3px; border-radius: 2px; font-weight: 800; text-align: center; }
+  .hero p.intro { font-size: clamp(16px, 1.6vw, 19px); color: #e5e3df; margin: 0 0 24px; max-width: 560px; }
+  .genres { color: var(--mist); font-size: 14px; margin-bottom: 26px; }
+  .genres span + span::before { content: '•'; margin: 0 8px; color: var(--smoke); }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 11px 26px 11px 20px;
+    border-radius: 5px; font-weight: 700; font-size: 17px; transition: transform .2s, background .2s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn svg { width: 22px; height: 22px; }
+  .btn-play { background: var(--bone); color: #000; }
+  .btn-play:hover { background: rgba(245,243,239,.8); }
+  .btn-info { background: rgba(109,109,110,.6); }
+  .btn-info:hover { background: rgba(109,109,110,.4); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: var(--red-2); }
+  .hero-age {
+    position: absolute; right: 0; bottom: 18vh; display: flex; align-items: center;
+    background: rgba(51,51,51,.6); border-left: 3px solid var(--bone); padding: 6px 40px 6px 12px; font-size: 15px;
+  }
+
+  /* ---------- Rows ---------- */
+  main { position: relative; z-index: 1; padding-top: 24px; }
+  .row { margin-bottom: 30px; scroll-margin-top: 80px; }
+  .row-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+  .row-head h2 { font-size: clamp(18px, 1.8vw, 24px); margin: 0; font-weight: 700; }
+  .row-head .explore { font-size: 13px; color: #54b9c5; font-weight: 600; opacity: 0; transition: opacity .3s; }
+  .row:hover .explore, .explore:focus-visible { opacity: 1; }
+  @media (hover: none) { .row-head .explore { opacity: 1; } }
+  /* Explore all: a separate full-screen browse page for one row. */
+  #browse { position: fixed; inset: 0; z-index: 140; background: var(--ink); overflow-y: auto; display: none; overscroll-behavior: contain; }
+  #browse.show { display: block; animation: browseIn .4s var(--ease); }
+  @keyframes browseIn { from { opacity: 0; transform: translateY(24px); } }
+  .browse-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 16px; padding-top: 18px; padding-bottom: 18px; background: linear-gradient(180deg, var(--ink) 70%, transparent); }
+  .browse-head .wordmark { font-size: 28px; margin-right: 8px; }
+  .browse-head h2 { margin: 0; font-size: clamp(22px, 3vw, 34px); }
+  .browse-back { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid #4d4d4d; border-radius: 4px; font-weight: 600; font-size: 14px; color: var(--bone); }
+  .browse-back:hover { border-color: var(--bone); }
+  .browse-back svg { width: 16px; }
+  .browse-close { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; background: #242424; display: grid; place-items: center; }
+  .browse-close svg { width: 18px; }
+  .browse-sub { color: var(--mist); margin: -6px 0 22px; font-size: 15px; }
+  .browse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 28px 12px; padding-bottom: 60px; }
+  #browseGrid > * { width: auto; }
+  .browse-grid .card[data-project] { transition: transform .3s var(--ease), box-shadow .3s; }
+  .browse-grid .card[data-project]:hover { transform: scale(1.04); box-shadow: 0 16px 32px rgba(0,0,0,.6); z-index: 2; }
+  .browse-grid .t10 { height: auto; }
+  .rail-wrap { position: relative; }
+  .rail {
+    display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--gutter);
+    padding-top: 14px; padding-bottom: 28px; margin-top: -14px; scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail > * { scroll-snap-align: start; flex: 0 0 auto; }
+  .rail-arrow {
+    position: absolute; top: 0; bottom: 14px; width: var(--gutter); z-index: 5; display: grid; place-items: center;
+    background: rgba(11,11,15,.6); opacity: 0; transition: opacity .3s;
+  }
+  .rail-arrow svg { width: 28px; transition: transform .2s; }
+  .rail-arrow:hover svg { transform: scale(1.3); }
+  .rail-wrap:hover .rail-arrow { opacity: 1; }
+  .rail-arrow.l { left: 0; } .rail-arrow.r { right: 0; }
+  @media (hover: none) { .rail-arrow { display: none; } }
+
+  /* Poster cards */
+  /* Row cards never change size on hover; the hover preview is a separate floating panel (#preview). */
+  .card {
+    width: clamp(220px, 23vw, 320px); border-radius: 6px; position: relative; text-align: left; padding: 0;
+    transition: transform .3s var(--ease), box-shadow .3s, opacity .2s;
+  }
+  .card.previewing { opacity: 0; }
+  .card:focus-visible { transform: scale(1.04); }
+  .cw.card:hover { transform: scale(1.04); z-index: 3; box-shadow: 0 16px 32px rgba(0,0,0,.6); }
+  @media (hover: none) { .card:active { transform: scale(.97); } }
+  .poster { aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; position: relative; }
+
+  #preview {
+    position: absolute; z-index: 120; background: #181818; border-radius: 8px; overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0,0,0,.75); display: none; cursor: pointer;
+  }
+  #preview.on { display: block; animation: pvIn .28s var(--ease) both; }
+  @keyframes pvIn { from { opacity: 0; transform: scale(.72); } }
+  #preview .poster { border-radius: 0; }
+  #preview .poster-title { font-size: clamp(34px, 3.2vw, 48px); }
+  #preview .pv-body { padding: 18px 20px 22px; }
+  #preview .circle-btns { gap: 10px; margin-bottom: 16px; }
+  #preview .meta { font-size: 15px; gap: 10px; margin: 0 0 12px; color: var(--mist); }
+  #preview .meta .badge { font-size: 13px; padding: 1px 7px; border-color: rgba(255,255,255,.45); color: var(--mist); }
+  #preview .meta .badge.sm { font-size: 11px; padding: 0 5px; border-radius: 3px; }
+  #preview .tags { font-size: 16px; color: var(--bone); }
+  #preview .tags span + span::before { content: '•'; margin: 0 10px; color: #646464; }
+  #preview .circle { width: 42px; height: 42px; border-color: rgba(255,255,255,.5); }
+  #preview .circle svg { width: 20px; }
+  #preview .circle:hover { border-color: var(--bone); background: rgba(255,255,255,.1); }
+  #preview .circle.fill:hover { background: rgba(245,243,239,.85); }
+  .poster-title {
+    position: absolute; left: 14px; bottom: 10px; right: 14px; font-family: var(--display);
+    font-size: clamp(28px, 2.6vw, 38px); line-height: .9; text-shadow: 0 2px 12px rgba(0,0,0,.6);
+  }
+  .poster-g { position: absolute; top: 10px; left: 12px; font-family: var(--display); font-size: 22px; color: var(--red); line-height: 1; }
+  .poster-motif { position: absolute; right: -10%; top: -10%; width: 70%; height: 120%; opacity: .5; }
+  /* "Recently added" tag sits centred on the poster's bottom edge; the title moves up above it. */
+  .badge-new {
+    position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 1; white-space: nowrap;
+    background: var(--red); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 10px 3px; border-radius: 3px 3px 0 0;
+  }
+  .poster.has-new .poster-title { bottom: 30px; }
+  .circle-btns { display: flex; gap: 8px; margin-bottom: 10px; }
+  .circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,.5); display: grid; place-items: center; }
+  .circle.fill { background: var(--bone); border-color: var(--bone); color: #000; }
+  .circle svg { width: 16px; }
+  .circle.more { margin-left: auto; }
+
+  /* Continue watching (experience) */
+  .cw { width: clamp(240px, 26vw, 340px); }
+  .cw .poster { border-radius: 6px 6px 0 0; }
+  .progress { height: 3px; background: #4d4d4d; }
+  .progress i { display: block; height: 100%; background: var(--red); }
+  /* Equal-height cards: the body fills whatever height the tallest card in the row sets. */
+  .cw { display: flex; flex-direction: column; }
+  .cw-body { padding: 12px 14px 14px; background: var(--ink-2); border-radius: 0 0 6px 6px; flex: 1; }
+  .poster-title.long { font-size: clamp(24px, 2.3vw, 32px); }
+  .cw-body h3 { margin: 0 0 2px; font-size: 15px; }
+  .cw-body .sub { color: var(--mist); font-size: 13px; }
+
+  /* Top 10 skills */
+  .t10 { display: flex; align-items: flex-end; height: clamp(160px, 15vw, 200px); padding-right: 8px; }
+  .t10-num {
+    font-family: var(--display); font-size: clamp(130px, 13vw, 180px); line-height: .78; letter-spacing: -.02em;
+    color: var(--ink); -webkit-text-stroke: 3px #6a6a72; margin-right: -14px; position: relative; z-index: 0;
+    min-width: .6em; text-align: right;
+  }
+  .t10:nth-child(10) .t10-num { letter-spacing: -.12em; margin-right: -6px; }
+  .t10-card {
+    position: relative; z-index: 1; height: 100%; aspect-ratio: 2/3; border-radius: 4px; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; transition: transform .3s var(--ease);
+  }
+  .t10:hover .t10-card { transform: scale(1.06); }
+  .t10-card b { font-family: var(--display); font-size: 24px; line-height: .95; font-weight: 400; }
+  .t10-card small { font-size: 11px; color: rgba(255,255,255,.75); }
+
+  /* Seasons */
+  .seasons { max-width: 1000px; }
+  .season-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
+  .season-bar h3 { margin: 0; font-size: clamp(17px, 1.6vw, 20px); }
+  .season-bar h3 span { font-weight: 500; color: var(--mist); }
+  .season-pick select {
+    appearance: none; -webkit-appearance: none; background: #242424 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f3ef' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 14px;
+    color: var(--bone); border: 1px solid #4d4d4d; border-radius: 4px; padding: 10px 40px 10px 16px; font: 700 15px var(--sans); cursor: pointer;
+  }
+  .season-pick select:hover { border-color: #8c8c8c; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .season-desc { color: var(--mist); margin: 0 0 14px; font-size: 15px; }
+  .episode {
+    display: grid; grid-template-columns: 40px 150px 1fr; gap: 18px; align-items: center; padding: 18px 16px;
+    border-bottom: 1px solid #2a2a30; border-radius: 6px; width: 100%; text-align: left; transition: background .2s;
+  }
+  /* The first episode is highlighted until the list is hovered; then the highlight follows the mouse. */
+  .episode:first-child { background: var(--ink-3); }
+  .episodes:hover .episode:first-child:not(:hover) { background: none; }
+  .episode:hover, .episode:focus-visible { background: #2c2c33; }
+  button.episode { cursor: pointer; }
+  .ep-n { font-size: 24px; color: var(--mist); text-align: center; transition: color .2s; }
+  .episode:hover .ep-n { color: var(--bone); }
+  .ep-thumb { aspect-ratio: 16/9; border-radius: 4px; position: relative; overflow: hidden; display: grid; place-items: center; }
+  .ep-big { display: grid; place-items: center; width: 100%; height: 100%; transition: opacity .2s; }
+  .ep-tag { font-family: var(--display); font-size: 26px; letter-spacing: .04em; color: rgba(255,255,255,.85); text-shadow: 0 2px 10px rgba(0,0,0,.5); padding: 0 8px; text-align: center; line-height: 1; overflow-wrap: anywhere; }
+  .ep-motif { width: 46%; opacity: .55; display: block; }
+  .ep-motif svg { width: 100%; display: block; }
+  .ep-play {
+    position: absolute; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(0,0,0,.55); border: 2px solid var(--bone); opacity: 0; transform: scale(.8); transition: opacity .2s, transform .25s var(--ease);
+  }
+  .ep-play svg { width: 16px; margin-left: 2px; }
+  .episode:hover .ep-play, .episode:focus-visible .ep-play { opacity: 1; transform: none; }
+  .episode:hover .ep-big { opacity: .4; }
+  .ep-sub { color: var(--mist); font-size: 13px; font-weight: 500; margin-top: 4px; }
+  .ep-head { display: flex; justify-content: space-between; gap: 12px; font-weight: 700; margin-bottom: 4px; }
+  .ep-head span { color: var(--mist); font-weight: 500; font-size: 14px; white-space: nowrap; }
+  .episode p { margin: 0; color: var(--mist); font-size: 14px; }
+  @media (max-width: 640px) {
+    .episode { grid-template-columns: 104px 1fr; gap: 12px; padding: 12px 0; align-items: start; }
+    .episode:first-child { background: none; }
+    .ep-n { display: none; }
+    .ep-tag { font-size: 18px; }
+    .ep-play { width: 30px; height: 30px; }
+    .ep-play svg { width: 12px; }
+    .ep-head { flex-direction: column; gap: 0; font-size: 15px; }
+    .ep-head span { font-size: 12px; }
+    .episode p { font-size: 13px; }
+  }
+
+  /* Achievements */
+  .award { width: clamp(220px, 22vw, 290px); padding: 20px; border-radius: 6px; background: linear-gradient(160deg, var(--ink-3), var(--ink-2)); border: 1px solid #2a2a30; }
+  .award .laurel { color: #e5b94a; font-family: var(--display); font-size: 15px; letter-spacing: .2em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .award .laurel svg { width: 18px; }
+  .award h3 { margin: 0 0 6px; font-size: 17px; }
+  .award p { margin: 0; color: var(--mist); font-size: 14px; }
+
+  /* About */
+  .about { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(24px, 4vw, 64px); max-width: 1200px; align-items: start; }
+  .about p { color: #dedcd7; font-size: 17px; margin: 0 0 16px; }
+  .about dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; margin: 0; font-size: 14px; }
+  .about dt { color: var(--smoke); }
+  .about dd { margin: 0; }
+  .cast { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .cast span { background: var(--ink-3); padding: 4px 10px; border-radius: 99px; font-size: 13px; }
+  .process { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 24px; }
+  .process > div { background: var(--ink-2); border: 1px solid #2a2a30; border-radius: 6px; padding: 14px; }
+  .process b { font-family: var(--display); font-size: 28px; font-weight: 400; color: var(--red); line-height: 1; }
+  .process h3 { margin: 4px 0; font-size: 15px; }
+  .about .process p { font-size: 13px; color: var(--mist); margin: 0; }
+  .service { display: flex; flex-direction: column; }
+  .svc-k { font-family: var(--display); font-size: 40px; line-height: 1; color: var(--red); margin-bottom: 8px; }
+  .service p { flex: 1; }
+  .svc-cta { margin-top: 14px; font-size: 14px; font-weight: 700; color: var(--bone); }
+  .svc-cta:hover { color: var(--red-2); }
+  @media (max-width: 760px) { .about { grid-template-columns: 1fr; } }
+
+  /* Still watching CTA */
+  .still { text-align: center; padding: 100px 16px 60px; border-top: 1px solid #222; margin-top: 40px; }
+  .still h2 { font-size: clamp(30px, 5vw, 56px); margin: 0 0 12px; font-weight: 600; letter-spacing: -.01em; }
+  .still p { color: var(--mist); margin: 0 auto 30px; max-width: 520px; }
+  .still .btns { justify-content: center; }
+  .socials { display: flex; justify-content: center; gap: 18px; margin-top: 30px; color: var(--mist); font-size: 14px; }
+  .socials a:hover { color: var(--bone); }
+  footer { text-align: center; color: var(--smoke); font-size: 12px; padding: 30px 16px 40px; }
+
+  /* ---------- Modal ---------- */
+  .modal-back {
+    position: fixed; inset: 0; z-index: 150; background: rgba(0,0,0,.72); display: none;
+    overflow-y: auto; padding: 40px 16px;
+  }
+  .modal-back.show { display: block; animation: fadeIn2 .3s; }
+  @keyframes fadeIn2 { from { opacity: 0; } }
+  .modal { max-width: 860px; margin: 0 auto; background: #181818; border-radius: 8px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.7); animation: modalIn .45s var(--ease); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(40px) scale(.96); } }
+  .modal-hero { aspect-ratio: 16/8; position: relative; overflow: hidden; }
+  .modal-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #181818, transparent 55%); }
+  .modal-hero .poster-title { font-size: clamp(44px, 7vw, 76px); left: clamp(18px, 4vw, 48px); bottom: 70px; z-index: 1; }
+  .modal-hero .btns { position: absolute; left: clamp(18px, 4vw, 48px); bottom: 18px; z-index: 1; align-items: center; }
+  .modal-hero .poster-g { left: clamp(18px, 4vw, 48px); top: 22px; font-size: 30px; z-index: 1; }
+  .modal-hero .circle { width: 44px; height: 44px; background: rgba(42,42,42,.6); }
+  .modal-hero .circle svg { width: 20px; }
+  .modal-hero .circle:hover { border-color: var(--bone); }
+  .modal-close { position: absolute; top: 14px; right: 14px; z-index: 2; width: 36px; height: 36px; border-radius: 50%; background: #181818; display: grid; place-items: center; }
+  .modal-close svg { width: 20px; }
+  .modal-body { padding: 8px clamp(18px, 4vw, 48px) 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 28px; }
+  .modal-body p { margin: 0 0 12px; }
+  .modal-body .side { font-size: 14px; color: var(--mist); }
+  .modal-body .side b { color: var(--smoke); font-weight: 500; }
+  .modal-body .side div { margin-bottom: 10px; }
+  .modal h4 { font-size: 22px; margin: 6px clamp(18px, 4vw, 48px) 8px; }
+  .modal-eps { padding: 0 clamp(18px, 4vw, 48px) 40px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; padding: 0 clamp(18px, 4vw, 48px) 30px; }
+  .stat { background: var(--ink-3); border-radius: 6px; padding: 14px; }
+  .stat b { display: block; font-family: var(--display); font-size: 34px; font-weight: 400; color: var(--bone); line-height: 1; }
+  .stat span { color: var(--mist); font-size: 12px; }
+  @media (max-width: 640px) {
+    .modal-hero { aspect-ratio: 4/3; }
+    .modal-hero .poster-title { font-size: 40px; bottom: 82px; right: 18px; }
+    .modal-hero .poster-motif { opacity: .35; }
+  }
+  @media (max-width: 640px) { .modal-body { grid-template-columns: 1fr; } .modal-back { padding: 0; } .modal { border-radius: 0; min-height: 100%; } }
+
+  /* ---------- Play intro reel ---------- */
+  #reel { position: fixed; inset: 0; z-index: 160; background: #000; display: none; }
+  #reel.show { display: block; }
+  .reel-bars { position: absolute; top: 18px; left: var(--gutter); right: var(--gutter); display: flex; gap: 6px; z-index: 2; }
+  .reel-bars span { flex: 1; height: 3px; background: rgba(255,255,255,.25); border-radius: 2px; overflow: hidden; }
+  .reel-bars i { display: block; height: 100%; width: 0; background: var(--bone); }
+  .reel-slide { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 0 var(--gutter); opacity: 0; transition: opacity .6s; }
+  .reel-slide.on { opacity: 1; }
+  .reel-slide .kicker { color: var(--red); font-weight: 700; letter-spacing: .3em; font-size: 13px; margin-bottom: 10px; }
+  .reel-slide h2 { font-family: var(--display); font-weight: 400; font-size: clamp(56px, 11vw, 150px); line-height: .9; margin: 0 0 16px; }
+  .reel-slide p { color: var(--mist); font-size: clamp(16px, 2vw, 22px); max-width: 640px; margin: 0 auto; }
+  .reel-slide.on h2 { animation: reelZoom 4.2s linear forwards; }
+  @keyframes reelZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+  .reel-ui { position: absolute; bottom: 24px; left: var(--gutter); right: var(--gutter); display: flex; justify-content: space-between; z-index: 2; font-size: 14px; color: var(--mist); }
+  .reel-ui button { padding: 8px 14px; border: 1px solid #444; border-radius: 4px; }
+  .reel-ui button:hover { color: var(--bone); border-color: var(--bone); }
+  .reel-tap { position: absolute; top: 0; bottom: 0; width: 35%; z-index: 1; }
+  .reel-tap.l { left: 0; } .reel-tap.r { right: 0; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 30px); opacity: 0; z-index: 170;
+    background: rgba(31,31,38,.95); border: 1px solid #333; padding: 12px 20px; border-radius: 8px; font-size: 14px;
+    transition: .4s var(--ease); pointer-events: none; width: max-content; max-width: calc(100vw - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Typewriter role line */
+  .typer { font-size: clamp(18px, 2vw, 24px); font-weight: 600; margin: -6px 0 16px; min-height: 1.4em; color: var(--bone); }
+  .typer b { color: var(--red-2); font-weight: 700; }
+  .caret { display: inline-block; width: 2px; height: 1em; background: var(--red); margin-left: 3px; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Hero photo slot (shown once DATA.photo is set) */
+  .hero-photo { position: absolute; right: 0; bottom: 0; top: 70px; width: min(56vw, 900px); }
+  .hero-photo img {
+    position: absolute; right: 0; bottom: 0; width: 100%; height: auto; max-height: 100%; object-fit: contain; object-position: bottom right;
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 28%); mask-image: linear-gradient(to top, transparent 0%, #000 28%);
+    transform-origin: 60% 30%; animation: photoIn 1.6s var(--ease) both, kenburns 22s 1.6s ease-in-out infinite alternate;
+  }
+  @keyframes photoIn { from { opacity: 0; transform: translateX(40px) scale(1.04); filter: blur(6px); } }
+  @keyframes kenburns { to { transform: scale(1.04); } }
+  /* Keep the name readable where it overlaps the photo. */
+  .hero-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,11,15,.85) 0%, transparent 45%); }
+  @media (max-width: 860px) {
+    /* Phone: head and shoulders sit to the right of the name. */
+    .hero-photo { width: 58vw; top: 96px; bottom: auto; height: 250px; }
+    .hero-photo img { height: 100%; width: 100%; max-height: none; object-fit: cover; object-position: 50% 0%; }
+    .hero-photo::after { background: linear-gradient(90deg, rgba(11,11,15,.7) 0%, transparent 45%); }
+  }
+  .starring { display: flex; align-items: center; gap: 10px; }
+  .starring img { width: 36px; height: 36px; border-radius: 50%; box-shadow: 0 0 0 2px var(--red); }
+  .still-avatar { width: 96px; height: 96px; border-radius: 50%; display: block; margin: 0 auto 20px; box-shadow: 0 0 0 3px var(--red), 0 0 40px rgba(229,9,20,.45); }
+  .reel-photo { height: min(34vh, 300px); width: auto; display: block; margin: 0 auto 10px; -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 30%); mask-image: linear-gradient(to top, transparent 0%, #000 30%); }
+
+  /* By the numbers strip */
+  .numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 40px; }
+  .num { background: linear-gradient(160deg, var(--ink-3), var(--ink-2)); border: 1px solid #2a2a30; border-radius: 6px; padding: 16px 16px 14px; position: relative; overflow: hidden; }
+  .num::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--red); }
+  .num b { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(38px, 4vw, 52px); line-height: 1; }
+  .num span { color: var(--mist); font-size: 13px; }
+
+  /* Card logline + My List */
+  .circle[data-add] { cursor: pointer; transition: background .2s, border-color .2s; }
+  .circle[data-add]:hover { border-color: var(--bone); background: rgba(255,255,255,.1); }
+  .circle.added { border-color: var(--bone); }
+
+  /* Progress bars fill when the row comes into view */
+  .progress i { transition: width 1.4s .3s var(--ease); }
+  .reveal:not(.in) .progress i { width: 0 !important; }
+
+  /* Skip Intro / Next Episode button */
+  .skip {
+    position: fixed; right: var(--gutter); bottom: 28px; z-index: 90; display: flex; align-items: center; gap: 10px;
+    background: rgba(20,20,25,.85); border: 2px solid rgba(255,255,255,.75); color: var(--bone); backdrop-filter: blur(6px);
+    padding: 10px 18px; border-radius: 4px; font-weight: 700; font-size: 15px; max-width: calc(100vw - 32px);
+    opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity .35s, transform .35s var(--ease), background .2s;
+  }
+  .skip.on { opacity: 1; transform: none; pointer-events: auto; }
+  .skip:hover { background: var(--bone); color: #000; }
+  .skip small { font-weight: 500; color: inherit; opacity: .7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .skip svg { width: 18px; flex: 0 0 auto; }
+  body.locked .skip { opacity: 0; pointer-events: none; }
+
+  @media (max-width: 640px) {
+    .numbers { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .num { padding: 10px 10px 10px 12px; }
+    .num b { font-size: 30px; }
+    .num span { font-size: 11px; line-height: 1.3; display: block; }
+    .skip { bottom: 16px; padding: 8px 14px; font-size: 14px; }
+    .skip small { display: none; }
+  }
+  .t10-card { transition: transform .35s var(--ease), box-shadow .35s; }
+  .t10:hover .t10-card { transform: scale(1.06) rotate(-1.5deg); box-shadow: 0 16px 30px rgba(0,0,0,.5); }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) {
+    nav.top { flex-wrap: wrap; height: auto; padding-top: 12px; padding-bottom: 10px; row-gap: 8px; }
+    .nav-links { order: 3; width: 100%; overflow-x: auto; white-space: nowrap; gap: 18px; scrollbar-width: none; }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .wordmark { font-size: 30px; }
+    .hero { padding-top: 110px; align-items: flex-end; }
+    .row, .still { scroll-margin-top: 110px; }
+    .hero { height: auto; min-height: 100svh; padding-bottom: 32px; }
+    .hero-age { display: none; }
+    .hero-bg .hero-type { font-size: 80vw; right: -20vw; }
+    .btn { padding: 10px 20px 10px 16px; font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body class="locked">
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Opening ident (click / key to skip) -->
+<div id="opening" role="button" tabindex="0" aria-label="Skip intro">
+  <div class="ident">
+    <div class="ident-studio" id="studioLabel"></div>
+    <div class="ident-letter" id="identLetter"></div>
+  </div>
+  <div class="ident-skip">CLICK TO SKIP</div>
+</div>
+
+<!-- Who's watching -->
+<section id="profiles" aria-labelledby="whoTitle">
+  <h1 id="whoTitle">Who's watching?</h1>
+  <div class="profile-grid" id="profileGrid"></div>
+  <p class="profile-hint">Each profile reorders the show for what you care about.</p>
+</section>
+
+<!-- Home -->
+<div id="home">
+  <nav class="top gutter" id="nav">
+    <a href="#top" class="wordmark" id="navMark"></a>
+    <div class="nav-links" id="navLinks"></div>
+    <div class="nav-right">
+      <div class="switcher" id="switcher">
+        <button class="nav-avatar" id="switchBtn" aria-haspopup="menu" aria-expanded="false" aria-label="Switch profile"></button>
+        <div class="switch-menu" role="menu" id="switchMenu"></div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero gutter" id="top">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+      <div class="hero-type" id="heroType"></div>
+      <div class="hero-photo" id="heroPhoto"></div>
+    </div>
+    <div class="hero-content">
+      <div class="series-tag"><b id="heroG"></b> S E R I E S</div>
+      <h1 id="heroName"></h1>
+      <div class="typer" aria-live="off"><span id="typer"></span><i class="caret" aria-hidden="true"></i></div>
+      <div class="meta" id="heroMeta"></div>
+      <p class="intro" id="heroIntro"></p>
+      <div class="genres" id="heroGenres"></div>
+      <div class="btns">
+        <button class="btn btn-play" id="playBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>Play</button>
+        <button class="btn btn-info" id="infoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>More Info</button>
+      </div>
+    </div>
+    <div class="hero-age" id="heroAge"></div>
+  </header>
+
+  <main id="rows"></main>
+
+  <section class="still gutter" id="contact">
+    <h2>Are you still watching?</h2>
+    <p id="stillCopy"></p>
+    <div class="btns">
+      <a class="btn btn-red" id="mailBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Continue Watching</a>
+      <button class="btn btn-info" id="replayBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Watch From Start</button>
+    </div>
+    <div class="socials" id="socials"></div>
+  </section>
+  <footer id="footer"></footer>
+  <button class="skip" id="skipBtn" type="button"></button>
+</div>
+
+<!-- Project details modal -->
+<!-- Explore all: full-screen browse page for one row -->
+<div id="browse" role="dialog" aria-modal="true" aria-labelledby="browseTitle">
+  <div class="browse-head gutter">
+    <button class="browse-back" id="browseBack" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 5l-7 7 7 7"/></svg>Back</button>
+    <h2 id="browseTitle"></h2>
+    <button class="browse-close" id="browseClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="gutter"><p class="browse-sub" id="browseSub"></p></div>
+  <div class="browse-grid gutter" id="browseGrid"></div>
+</div>
+
+<!-- Hover preview for Originals (desktop) -->
+<div id="preview" role="group" aria-label="Preview"></div>
+
+<div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-label="Project details">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- Play intro reel -->
+<div id="reel" role="dialog" aria-modal="true" aria-label="Intro reel">
+  <div class="reel-bars" id="reelBars"></div>
+  <div id="reelSlides"></div>
+  <button class="reel-tap l" id="reelPrev" aria-label="Previous"></button>
+  <button class="reel-tap r" id="reelNext" aria-label="Next"></button>
+  <div class="reel-ui"><span id="reelCount"></span><button id="reelClose">Close ✕</button></div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =====================================================================
+   ALL CONTENT LIVES HERE. Edit this object and the whole site follows.
+   ===================================================================== */
+const DATA = {
+  name: 'Gaurav Agarwal',
+  short: 'Gaurav',
+  initial: 'G',
+  studio: 'AN AGARWAL ORIGINAL',
+  role: "Product Manager · Founder's Office · Builder",
+  intro: "I take products from zero to shipped, strategy included. Product Manager at alokbansal.com, BITS Pilani graduate, cofounder of a ₹50L+ business, and a builder who ships his own products with AI.",
+  genres: ['Product', 'Strategy', 'Fintech', 'AI Builds'],
+  year: '2026',
+  email: 'gauravag0808@gmail.com',
+  location: 'India · open to remote',
+  links: {
+    LinkedIn: 'https://www.linkedin.com/in/gaurav-agarwal-ga0202/',
+    GitHub: 'https://github.com/Bittu25',
+    'Tower Portfolio': 'https://bittu25.github.io/tower-portfolio/',
+    '3D Town Portfolio': 'https://bittu25.github.io/portfolio/',
+  },
+  about: [
+    "Mathematics taught me to model a problem; mechanical engineering taught me to build the thing. I studied both at BITS Pilani, then went and built: a merchandising business that served 3,000+ students, two stints in founder's offices, and a run of products of my own.",
+    "Today I lead a study abroad marketplace from zero at alokbansal.com, and take on freelance product, strategy and build work on the side.",
+  ],
+  cast: ['Zero to one', 'Data-driven', 'Founder mindset', 'Ships fast', 'BITS Pilani'],
+  process: [
+    { k: '01', t: 'Understand', d: 'Talk to users and stakeholders, read the numbers, and name the real problem.' },
+    { k: '02', t: 'Decide', d: 'Narrow down to the few bets worth making, with a metric for each.' },
+    { k: '03', t: 'Ship', d: 'Prototype fast, test with real people, then build what holds up.' },
+    { k: '04', t: 'Measure', d: 'Watch the numbers, write up what we learned, and plan the next iteration.' },
+  ],
+
+  // Who's watching? Each profile picks the order of rows.
+  profiles: [
+    { id: 'recruiter', name: 'Recruiter', colors: ['#e50914', '#7a0610'], face: 'smile', order: ['continue', 'originals', 'awards', 'skills', 'journey', 'about', 'services'], blurb: 'experience and impact first' },
+    { id: 'founder',   name: 'Founder',   colors: ['#f5b70a', '#8a5a00'], face: 'star',  order: ['originals', 'awards', 'continue', 'services', 'skills', 'journey', 'about'], blurb: 'products and outcomes first' },
+    { id: 'client',    name: 'Client',    colors: ['#2b6cff', '#0b2a7a'], face: 'code',  order: ['services', 'originals', 'awards', 'skills', 'continue', 'about', 'journey'], blurb: 'what I can do for you first' },
+    { id: 'explorer',  name: 'Explorer',  colors: ['#1fb57a', '#0a5a3a'], face: 'wink',  order: ['about', 'journey', 'originals', 'awards', 'continue', 'skills', 'services'], blurb: 'the story first' },
+  ],
+
+  // Projects = Originals.
+  projects: [
+    {
+      id: 'marketplace', title: 'Study Abroad Marketplace', year: '2026', kind: 'Product · alokbansal.com', genre: ['Product', 'Marketplace', 'Growth'], isNew: true,
+      logline: 'Leading a new study abroad marketplace from zero: strategy, catalogue, partners and the acquisition funnel.',
+      details: 'Rewrote the user stories and redesigned the landing flow, which doubled inquiry form submissions. Technical SEO took the site to #1 on Google.',
+      stack: ['Product strategy', 'User stories', 'Technical SEO', 'Funnels'],
+      episodes: ['Product strategy for a marketplace built from zero', 'A catalogue of 12+ categories, from universities to visas and loans', 'Partner onboarding and the acquisition funnel', 'New landing flow: 2× inquiry submissions'],
+      stats: [{ v: '2×', l: 'inquiry submissions' }, { v: '#1', l: 'on Google search' }, { v: '90%', l: 'faster page loads' }, { v: '12+', l: 'catalogue categories' }],
+      palette: ['#03192e', '#0a5ea8', '#5ec8ff'], motif: 'globe',
+    },
+    {
+      id: 'oauthguides', title: 'OAuth App Guides', year: '2026', kind: 'Developer tool', genre: ['Dev Tools', 'AI Agent', 'Next.js'], isNew: true,
+      logline: 'Look up any app and see exactly what it takes to get your own OAuth app approved.',
+      details: 'For developers and agent builders moving off managed OAuth apps. A curated library of 12 researched guides, plus live generation: a research agent on Claude reads the provider\'s official docs in real time and writes a shareable guide, with every claim labelled sourced, inferred or uncertain.',
+      stack: ['Next.js 15', 'TypeScript', 'Claude', 'Web search + fetch'],
+      episodes: ['Curated guides for 12 apps (Gmail, Slack, Salesforce, Shopify…)', 'Difficulty, approval wait and realistic time to production', 'Live research agent with a streaming progress log', 'Evidence labels on every claim, checked by a validator'],
+      stats: [{ v: '12', l: 'curated app guides' }, { v: 'Live', l: 'AI-generated guides' }, { v: '3', l: 'evidence labels per claim' }],
+      palette: ['#0b1530', '#3b3fc4', '#9ea6ff'], motif: 'key',
+    },
+    {
+      id: 'nivesh', title: 'Nivesh AI', year: '2026', kind: 'Full-stack build', genre: ['Fintech', 'AI', 'PWA'], isNew: true,
+      logline: 'An investing app with SIP onboarding, XIRR tracking and a Hinglish AI advisor powered by Claude.',
+      details: 'Designed and built on my own. Supabase backend, deployed on Railway, shipped as a PWA plus APK, monetised with trail commission and a Pro plan.',
+      stack: ['Supabase', 'Claude', 'PWA', 'Railway'],
+      episodes: ['Personalised SIP onboarding', 'Live portfolio tracking and XIRR analytics', 'A conversational Hinglish advisor', 'Business model with a 17.8× LTV:CAC'],
+      stats: [{ v: '17.8×', l: 'LTV : CAC model' }, { v: 'PWA', l: 'plus APK' }, { v: 'XIRR', l: 'portfolio analytics' }],
+      palette: ['#1a0d02', '#8a4a07', '#ffb547'], motif: 'coin',
+    },
+    {
+      id: 'einvoice', title: 'E-Invoicing GTM', year: '2026', kind: "Founder's office case", genre: ['Strategy', 'Fintech', 'GTM'],
+      logline: 'Which markets a spend-management fintech should enter first, and who to partner with.',
+      details: 'Compared e-invoicing mandates, picked launch markets, decided build versus partner, and shortlisted partners with pricing benchmarks where none were public.',
+      stack: ['Market research', 'GTM', 'Partner research'],
+      episodes: ['Compared 5 e-invoicing mandates', 'Picked 2 launch markets', 'Build in-house vs. partner', 'Shortlisted 7 network, payments and financing partners'],
+      stats: [{ v: '2', l: 'launch markets' }, { v: '7', l: 'partners shortlisted' }, { v: '5', l: 'mandates compared' }],
+      palette: ['#04211f', '#0c6b63', '#4fe0cf'], motif: 'doc',
+    },
+    {
+      id: 'tradepips', title: 'TradePips', year: '2026', kind: 'Content product', genre: ['Trading', 'Education', 'Automation'],
+      logline: 'A plain-English trading education site for Indian traders, with a new guide every day.',
+      details: 'Covers pips, lot sizes, stop losses and market structure. A daily task writes the next guide from a topic list and publishes it.',
+      stack: ['Content', 'SEO', 'Automation'],
+      episodes: ['Plain-English guides for IST traders', 'Pips, lot sizes, stops and market structure', 'Automated daily publishing pipeline'],
+      stats: [{ v: 'Daily', l: 'new guide' }, { v: '13+', l: 'guides published' }, { v: 'Auto', l: 'publishing' }],
+      link: 'https://tradepips.co', palette: ['#06261a', '#0f7a4a', '#46d369'], motif: 'chart',
+    },
+    {
+      id: 'hackerclub', title: 'Hacker Club', year: '2026', kind: 'Web app', genre: ['Coding', 'Contests', 'Community'],
+      logline: 'An arena for coding contests and online hackathons: compete from anywhere, get judged instantly.',
+      details: 'In-browser code editor with an instant judge, a global leaderboard and a ⌘K command palette across 10 pages.',
+      stack: ['JavaScript', 'Web', 'Judge engine'],
+      episodes: ['In-browser editor and instant judge', 'Global leaderboard', '⌘K command palette across 10 pages'],
+      stats: [{ v: '10', l: 'pages' }, { v: 'Global', l: 'leaderboard' }],
+      link: 'https://bittu25.github.io/hacker-club/', palette: ['#16061f', '#5a1a7a', '#d38bff'], motif: 'bolt',
+    },
+    {
+      id: 'dataworld', title: 'Data World 3D', year: '2026', kind: '3D dashboards', genre: ['3D', 'Data Viz', 'three.js'],
+      logline: 'Turns any dataset into an explorable 3D world where every object is a data point.',
+      details: 'A retail store for inventory and lost sales, a hospital for admissions. Click any shelf, bed or van for its numbers.',
+      stack: ['three.js', 'WebGL', 'JavaScript'],
+      episodes: ['CSV to 3D world', 'Retail store: inventory and lost sales', 'Hospital: admissions', 'Click any object for its numbers'],
+      stats: [{ v: '2', l: 'worlds built' }, { v: 'Click', l: 'any object' }],
+      palette: ['#03192e', '#16457a', '#7fb2ff'], motif: 'cube',
+    },
+    {
+      id: 'snapvanish', title: 'Snap Vanish', year: '2026', kind: 'Chrome extension', genre: ['Chrome', 'Computer Vision', 'Fun'],
+      logline: 'Snap your fingers on a video call and you crumble into dust while your mic mutes.',
+      details: 'Works on Meet, Teams and Zoom. Snap again and you re-form. It learns your room in about 10 seconds.',
+      stack: ['Chrome extension', 'Hand tracking', 'Canvas'],
+      episodes: ['Snap gesture detection', 'Dust dissolve on camera + auto mute', 'Learns your room in ~10s'],
+      stats: [{ v: '3', l: 'Meet, Teams, Zoom' }, { v: '~10s', l: 'learns your room' }],
+      palette: ['#1a0a2e', '#6b2bd9', '#c79bff'], motif: 'dust',
+    },
+    {
+      id: 'tower', title: 'Agarwal Tower', year: '2026', kind: '3D portfolio', genre: ['3D', 'Portfolio', 'three.js'],
+      logline: 'My portfolio as an 828 m tower: ride the lift and step out on every floor.',
+      details: 'Every floor is a chapter, from the foundations to the spire, with day and dusk lighting and a guided tour.',
+      stack: ['three.js', 'WebGL', 'Performance tuning'],
+      episodes: ['19 floors, one per chapter', 'Lift ride with a guided tour', 'Day and dusk lighting'],
+      stats: [{ v: '828 m', l: 'tall' }, { v: '19', l: 'floors' }],
+      link: 'https://bittu25.github.io/tower-portfolio/', palette: ['#0c0f18', '#3a4660', '#c9a45c'], motif: 'tower',
+    },
+    {
+      id: 'town', title: '3D Town Portfolio', year: '2026', kind: '3D portfolio', genre: ['3D', 'Portfolio', 'React'],
+      logline: 'A whole 3D town to explore, with traffic, a waterfall, day and night, and a guided tour.',
+      details: 'Every building is a chapter of my work. Built with React and three.js and tuned to run smoothly in the browser.',
+      stack: ['React', 'three.js', 'Vite'],
+      episodes: ['A living town: traffic, boats, people', 'Day and night with street lights', 'Guided tour and contact card'],
+      stats: [{ v: '62', l: 'assets' }, { v: 'Day/Night', l: 'modes' }],
+      link: 'https://bittu25.github.io/portfolio/', palette: ['#0a1f0e', '#2d6a2f', '#9be37a'], motif: 'town',
+    },
+  ],
+
+  // Experience = Continue Watching. progress = how far into the story (current role is still playing).
+  experience: [
+    { title: 'Product Manager', org: 'alokbansal.com', period: '2026 – now', progress: 35, note: '2× inquiries · #1 on Google · −90% load time', palette: ['#03192e', '#0a5ea8'] },
+    { title: 'Product Intern', org: 'EPIK Electronics', period: 'Jan – Jul 2026', progress: 100, note: '−25% workflow delays · 95% on-time delivery', palette: ['#1a0a2e', '#6b2bd9'] },
+    { title: 'Co-Founder', org: 'SIGMA', period: 'Aug 2023 – May 2025', progress: 100, note: '₹50L+ revenue in 18 months · 3,000+ students', palette: ['#2a0610', '#e50914'] },
+    { title: "Founder's Office Intern", org: 'APAC Insurance', period: 'Sep – Nov 2024', progress: 100, note: '+15% customer acquisition · −20% turnaround', palette: ['#04211f', '#0c6b63'] },
+    { title: 'Finance Analyst Intern', org: 'KEC International', period: 'May – Jul 2023', progress: 100, note: '18% better portfolio recommendations', palette: ['#1a0d02', '#8a4a07'] },
+  ],
+
+  // Top 10 skills.
+  skills: [
+    { name: 'Product Strategy', note: 'Bets with metrics' }, { name: 'User Stories', note: 'Roadmaps a team can run' },
+    { name: 'Go-to-Market', note: 'Markets & partners' }, { name: 'Technical SEO', note: 'Took a site to #1' },
+    { name: 'SQL', note: 'Read the numbers' }, { name: 'Python', note: 'Analysis & scripts' },
+    { name: 'Financial Modelling', note: 'Bloomberg certified' }, { name: 'Figma', note: 'Flows & prototypes' },
+    { name: 'Power BI', note: 'Dashboards' }, { name: 'Claude + Supabase', note: 'Ship MVPs in days' },
+  ],
+
+  // Freelance services row.
+  services: [
+    { k: 'PM', t: 'Product Strategy', d: 'User stories, roadmaps and prioritisation a team can execute, with a clear metric for every bet.' },
+    { k: 'FO', t: "Founder's Office", d: 'Market research, go-to-market plans, partner research and investor-ready documents.' },
+    { k: 'MVP', t: 'MVPs & Prototypes', d: 'Working web apps, PWAs and Chrome extensions in days, built with AI-assisted tooling.' },
+    { k: 'SEO', t: 'Growth & SEO', d: 'Technical SEO, page speed and conversion work, the kind that took a site to #1 and doubled inquiries.' },
+  ],
+
+  // My Journey = seasons with episodes, newest first. Season 1 education, Season 2 projects, Season 3 work.
+  // In Season 2, `project` links an episode to its Original (same artwork, opens its details).
+  journey: [
+    { season: 'Season 1', title: 'Education', desc: 'Degrees, coursework and research.', episodes: [
+      { t: 'BITS Pilani: M.Sc. Mathematics + B.E. Mechanical', tag: 'BITS', when: '2021 – 2026 · Integrated dual degree', d: 'Coursework in financial risk and management, business analysis and valuation, game theory, cryptography, and graphs and networks. Final-year thesis on simulation-based optimisation.' },
+    ]},
+    { season: 'Season 2', title: 'Projects', desc: 'Products and cases I built on my own.', episodes: [
+      { t: 'OAuth App Guides', project: 'oauthguides', when: '2026', d: 'Developer tool: 12 researched guides plus a live AI agent that works out how to get any app\'s OAuth approved.' },
+      { t: 'Nivesh AI', project: 'nivesh', when: '2026', d: 'Investing app with SIP onboarding, XIRR tracking and a Hinglish AI advisor powered by Claude.' },
+      { t: 'TradePips', project: 'tradepips', when: '2026', d: 'Plain-English trading education for Indian traders, with a new guide published every day.' },
+      { t: 'Hacker Club', project: 'hackerclub', when: '2026', d: 'Coding contests and online hackathons with an in-browser editor, judge and global leaderboard.' },
+      { t: 'Data World 3D', project: 'dataworld', when: '2026', d: 'Turns any dataset into an explorable 3D world where every object is a data point.' },
+      { t: 'Snap Vanish', project: 'snapvanish', when: '2026', d: 'Chrome extension: snap on a video call and you crumble into dust while your mic mutes.' },
+      { t: 'E-Invoicing GTM', project: 'einvoice', when: '2026', d: "Founder's office case: launch markets, build vs. partner, and a partner shortlist for a fintech." },
+    ]},
+    { season: 'Season 3', title: 'Experience', desc: 'Internships, a startup, and full-time work.', episodes: [
+      { t: 'alokbansal.com', tag: 'PM', when: '2026 – now · Full-time', d: 'Product Manager. Leading a study abroad marketplace from zero: 2× inquiries and #1 on Google.' },
+      { t: 'EPIK Electronics', tag: 'EPIK', when: 'Jan – Jul 2026 · Internship', d: 'Product Intern, Bangalore. Root cause analysis cut workflow delays by 25%; 95% on-time delivery.' },
+      { t: 'SIGMA', tag: 'SIGMA', when: 'Aug 2023 – May 2025 · Co-founder', d: 'Cofounded a merchandising platform for students and colleges. ₹50L+ revenue and 3,000+ students in 18 months.' },
+      { t: 'APAC Insurance', tag: 'APAC', when: 'Sep – Nov 2024 · Internship', d: "Founder's Office Intern. Market research and segmentation lifted customer acquisition by 15%." },
+      { t: 'KEC International', tag: 'KEC', when: 'May – Jul 2023 · Internship', d: 'Finance Analyst Intern. Excel valuation models across 15+ stocks improved portfolio recommendations by 18%.' },
+    ]},
+  ],
+
+  // Awards & achievements.
+  awards: [
+    { kicker: 'FOUNDER', title: '₹50L+ Revenue', d: 'In 18 months as cofounder of SIGMA, serving 3,000+ students.' },
+    { kicker: 'RANKED #1', title: '#1 on Google', d: 'Technical SEO and a 90% faster site at alokbansal.com.' },
+    { kicker: 'GROWTH', title: '2× Inquiries', d: 'From a redesigned landing flow and rewritten user stories.' },
+    { kicker: 'CERTIFIED', title: 'Bloomberg Market Concepts', d: 'Bloomberg certified in markets and finance.' },
+    { kicker: 'DELIVERY', title: '95% On-Time', d: 'Across engineering, design and ops at EPIK Electronics.' },
+  ],
+
+  // Photos next to index.html. Leave '' to hide them.
+  photo: 'gaurav-hero.png',      // banner cutout
+  avatar: 'gaurav-avatar.png',   // round headshot
+
+  // Roles typed out under the name.
+  typer: ['Product Manager', "Founder's Office", 'Zero-to-One Builder', 'Freelance Partner'],
+
+  // "By the numbers" strip; counts up when it scrolls into view.
+  numbers: [
+    { pre: '₹', to: 50, suf: 'L+', l: 'revenue as SIGMA cofounder' },
+    { to: 3000, suf: '+', l: 'students served' },
+    { pre: '#', to: 1, l: 'on Google after my SEO' },
+    { to: 2, suf: '×', l: 'inquiry submissions' },
+    { to: 95, suf: '%', l: 'on-time delivery at EPIK' },
+    { to: 10, l: 'Originals shipped' },
+  ],
+
+  // ▶ Play reel slides.
+  reel: [
+    { k: 'PREVIOUSLY ON', h: 'GAURAV AGARWAL', p: 'Product Manager, founder\'s office alum and builder. BITS Pilani.' },
+    { k: 'THE FOUNDER YEARS', h: '₹50L+ IN 18 MONTHS', p: 'Cofounded SIGMA and served 3,000+ students.' },
+    { k: 'NOW STREAMING', h: '#1 ON GOOGLE', p: 'Leading a study abroad marketplace at alokbansal.com. 2× inquiries.' },
+    { k: 'THE ORIGINALS', h: '10 ORIGINALS', p: 'OAuth App Guides, Nivesh AI, TradePips, Hacker Club, Snap Vanish, two 3D portfolios and more.' },
+    { k: 'NEXT EPISODE', h: 'WITH YOU?', p: 'Open to product roles and freelance work. India, open to remote.' },
+  ],
+};
+
+/* =============================== Helpers ============================== */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8z"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>',
+  like: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 20H7"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>',
+  left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 5l-7 7 7 7"/></svg>',
+  right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  laurel: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>',
+};
+const FACES = {
+  smile: '<svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"><circle cx="32" cy="38" r="3" fill="#fff"/><circle cx="68" cy="38" r="3" fill="#fff"/><path d="M28 62q22 22 44 0"/></svg>',
+  code:  '<svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M34 32L16 50l18 18M66 32l18 18-18 18M56 26L44 74"/></svg>',
+  star:  '<svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"><circle cx="32" cy="38" r="3" fill="#fff"/><circle cx="68" cy="38" r="3" fill="#fff"/><path d="M30 64h40"/><path d="M50 8l4 8 8 1-6 5 2 8-8-4-8 4 2-8-6-5 8-1z" fill="#fff" stroke-width="0"/></svg>',
+  wink:  '<svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"><path d="M26 38h12"/><circle cx="68" cy="38" r="3" fill="#fff"/><path d="M30 60q20 18 40 0"/></svg>',
+};
+const MOTIF = {
+  chart: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 80L25 60 40 68 60 35 75 45 95 15"/><path d="M5 95h90" opacity=".4"/></svg>',
+  ghost: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><path d="M25 90V45a25 25 0 0 1 50 0v45l-8-7-9 7-8-7-8 7-9-7z"/><circle cx="40" cy="45" r="3" fill="currentColor"/><circle cx="60" cy="45" r="3" fill="currentColor"/></svg>',
+  cube:  '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><path d="M50 10l35 20v40L50 90 15 70V30z"/><path d="M15 30l35 20 35-20M50 50v40"/></svg>',
+  bolt:  '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><path d="M58 8L22 56h26l-6 36 36-48H52z"/></svg>',
+  globe: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><circle cx="50" cy="50" r="38"/><ellipse cx="50" cy="50" rx="16" ry="38"/><path d="M12 50h76M18 30h64M18 70h64"/></svg>',
+  key:   '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="34" cy="50" r="18"/><circle cx="34" cy="50" r="6"/><path d="M52 50h40M80 50v14M70 50v10"/></svg>',
+  coin:  '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><circle cx="50" cy="50" r="38"/><path d="M36 32h28M36 44h28M44 32c14 0 14 24 0 24h-8l24 22"/></svg>',
+  shirt: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><path d="M36 14l-24 14 10 18 10-5v47h36V41l10 5 10-18-24-14c-2 8-8 12-14 12s-12-4-14-12z"/></svg>',
+  doc:   '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3"><path d="M24 8h38l16 16v68H24z"/><path d="M62 8v16h16M34 40h32M34 52h32M34 64h20"/><path d="M58 76l6 6 12-14"/></svg>',
+  dust:  '<svg viewBox="0 0 100 100" fill="currentColor"><circle cx="30" cy="40" r="10"/><circle cx="48" cy="30" r="6"/><circle cx="62" cy="44" r="4"/><circle cx="72" cy="28" r="3"/><circle cx="80" cy="50" r="2.5"/><circle cx="88" cy="36" r="2"/><circle cx="56" cy="62" r="3"/><circle cx="70" cy="70" r="2"/><circle cx="40" cy="60" r="5"/></svg>',
+  tower: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><path d="M50 2v14M44 16h12l4 30h6l4 30h6l4 20H20l4-20h6l4-30h6z"/><path d="M50 16v80"/></svg>',
+  town:  '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><path d="M6 92h88M12 92V54h18v38M30 92V30h22v62M52 92V46h16v46M68 92V22h20v70"/><path d="M36 40h10M36 52h10M36 64h10M74 32h8M74 44h8M74 56h8"/></svg>',
+};
+const grad = (p) => `background: radial-gradient(120% 120% at 100% 0%, ${p[1]} 0%, ${p[0]} 55%, #08080b 100%);`;
+const match = (id) => 90 + ([...id].reduce((a, c) => a + c.charCodeAt(0), 0) % 9);
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ============================ Opening ident =========================== */
+let stage = 'opening';
+function startOpening() {
+  stage = 'opening';
+  document.body.classList.add('locked');
+  $('#home').classList.remove('show');
+  $('#profiles').classList.remove('show');
+  const op = $('#opening');
+  // Re-mount the animated nodes so CSS animations replay.
+  $('.ident', op).innerHTML = `<div class="ident-studio">${esc(DATA.studio)}</div><div class="ident-letter">${esc(DATA.initial)}</div>`;
+  op.style.display = 'grid';
+  clearTimeout(startOpening.timer);
+  startOpening.timer = setTimeout(showProfiles, 3400);
+}
+function showProfiles() {
+  if (stage !== 'opening') return;
+  stage = 'profiles';
+  clearTimeout(startOpening.timer);
+  $('#opening').style.display = 'none';
+  $('#profiles').classList.add('show');
+  $('.profile-btn')?.focus({ preventScroll: true });
+}
+$('#opening').addEventListener('click', showProfiles);
+$('#opening').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') showProfiles(); });
+
+$('#profileGrid').innerHTML = DATA.profiles.map((p) => `
+  <button class="profile-btn" data-id="${p.id}">
+    <div class="avatar" style="background: linear-gradient(135deg, ${p.colors[0]}, ${p.colors[1]})">${FACES[p.face]}</div>
+    <span>${esc(p.name)}</span>
+  </button>`).join('');
+$('#profileGrid').addEventListener('click', (e) => {
+  const b = e.target.closest('.profile-btn'); if (b) pickProfile(b.dataset.id);
+});
+
+/* ================================ Home ================================ */
+let profile = null;
+function pickProfile(id) {
+  const wasHome = stage === 'home';
+  profile = DATA.profiles.find((p) => p.id === id);
+  try { sessionStorage.setItem('series-profile', id); } catch {}
+  stage = 'home';
+  $('#profiles').classList.remove('show');
+  $('#opening').style.display = 'none';
+  document.body.classList.remove('locked');
+  renderNavProfile();
+  renderRows();
+  if (wasHome) {
+    toast(`Now watching as ${profile.name}: ${profile.blurb}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    window.scrollTo(0, 0);
+    $('#home').classList.add('show');
+  }
+}
+
+function renderStatic() {
+  document.title = `${DATA.name} — The Series`;
+  $('#navMark').textContent = DATA.short.toUpperCase();
+  $('#heroG').textContent = DATA.initial;
+  $('#heroType').textContent = DATA.short.toUpperCase();
+  $('#heroName').textContent = DATA.name.toUpperCase();
+  $('#heroMeta').innerHTML = `
+    <span class="match">${match(DATA.name)}% Match</span><span>${DATA.year}</span>
+    <span class="badge">U/A 13+</span><span>${DATA.journey.length} Seasons</span><span class="badge">HD</span>
+    <span class="top10"><i>TOP<br>10</i>#1 in Portfolios Today</span>`;
+  $('#heroIntro').textContent = DATA.intro;
+  $('#heroGenres').innerHTML = DATA.genres.map((g) => `<span>${esc(g)}</span>`).join('');
+  $('#heroAge').textContent = 'U/A 13+';
+  $('#stillCopy').textContent = `The next episode is the one we make together. Open to product roles and freelance work, based in India and open to remote. ${DATA.email}`;
+  $('#mailBtn').href = `mailto:${DATA.email}`;
+  $('#socials').innerHTML = Object.entries(DATA.links).map(([k, v]) => `<a href="${esc(v)}" target="_blank" rel="noopener">${esc(k)}</a>`).join('<span aria-hidden="true">·</span>');
+  $('#footer').textContent = `© ${new Date().getFullYear()} ${DATA.name}. A personal portfolio with a streaming-style look. Not affiliated with any streaming service.`;
+  $('#navLinks').innerHTML = [['top', 'Home'], ['originals', 'Originals'], ['continue', 'Experience'], ['skills', 'Skills'], ['journey', 'Journey'], ['services', 'Hire Me'], ['contact', 'Contact']]
+    .map(([id, l]) => `<a href="#${id}">${l}</a>`).join('');
+}
+
+function renderNavProfile() {
+  const av = (p) => `style="background: linear-gradient(135deg, ${p.colors[0]}, ${p.colors[1]})"`;
+  const btn = $('#switchBtn');
+  btn.setAttribute('style', av(profile).slice(7, -1));
+  btn.innerHTML = FACES[profile.face];
+  $('#switchMenu').innerHTML = `<div class="menu-label">Switch profile</div>` + DATA.profiles.filter((p) => p.id !== profile.id).map((p) => `
+    <button role="menuitem" data-id="${p.id}"><span class="nav-avatar" ${av(p)}>${FACES[p.face]}</span>${esc(p.name)}</button>`).join('');
+}
+$('#switchBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const s = $('#switcher'); s.classList.toggle('open');
+  $('#switchBtn').setAttribute('aria-expanded', s.classList.contains('open'));
+});
+$('#switchMenu').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-id]'); if (!b) return;
+  $('#switcher').classList.remove('open'); pickProfile(b.dataset.id);
+});
+document.addEventListener('click', () => $('#switcher').classList.remove('open'));
+
+/* Row builders */
+const rail = (inner) => `
+  <div class="rail-wrap">
+    <button class="rail-arrow l" aria-label="Scroll left">${ICON.left}</button>
+    <div class="rail gutter">${inner}</div>
+    <button class="rail-arrow r" aria-label="Scroll right">${ICON.right}</button>
+  </div>`;
+const row = (id, title, body, explore = true) => `
+  <section class="row reveal" id="${id}">
+    <div class="row-head gutter"><h2>${title}</h2>${explore ? '<button class="explore" type="button" data-explore>Explore all ›</button>' : ''}</div>
+    ${body}
+  </section>`;
+
+function posterArt(p, big = false) {
+  return `<div class="${big ? 'modal-hero' : `poster${p.isNew ? ' has-new' : ''}`}" style="${grad(p.palette)}">
+    <div class="poster-motif" style="color:${p.palette[2]}">${MOTIF[p.motif]}</div>
+    <div class="poster-g">${esc(DATA.initial)}</div>
+    ${p.isNew && !big ? '<span class="badge-new">Recently added</span>' : ''}
+    <div class="poster-title${!big && p.title.length > 16 ? ' long' : ''}">${esc(p.title)}</div>
+    ${big ? `<div class="btns">
+      ${p.link && p.link !== '#' ? `<a class="btn btn-play" href="${esc(p.link)}" target="_blank" rel="noopener">${ICON.play}${p.link.includes('github.com') ? 'View Code' : 'Watch Live'}</a>` : `<button class="btn btn-play" data-soon>${ICON.play}Play</button>`}
+      ${addBtn(p.id)}
+      <button class="circle" aria-label="Like" data-like>${ICON.like}</button>
+    </div>` : ''}
+  </div>`;
+}
+
+const SECTIONS = {
+  originals: () => row('originals', `${esc(DATA.short)} Originals`, rail(DATA.projects.map((p) => `
+    <button class="card" data-project="${p.id}" aria-label="${esc(p.title)}: open details">${posterArt(p)}</button>`).join(''))),
+
+  continue: () => row('continue', `Continue Watching for ${esc(profile.name)}`, rail(DATA.experience.map((x) => `
+    <article class="cw card" tabindex="0">
+      <div class="poster" style="${grad([x.palette[0], x.palette[1], '#fff'])}">
+        <div class="poster-g">${esc(DATA.initial)}</div>
+        <div class="poster-title${x.org.length > 12 ? ' long' : ''}">${esc(x.org)}</div>
+      </div>
+      <div class="progress" aria-label="${x.progress}% watched"><i style="width:${x.progress}%"></i></div>
+      <div class="cw-body"><h3>${esc(x.title)}</h3><div class="sub">${esc(x.period)} · ${esc(x.note)}</div></div>
+    </article>`).join(''))),
+
+  skills: () => row('skills', 'Top 10 Skills Today', rail(DATA.skills.slice(0, 10).map((s, i) => {
+    const hue = (i * 37 + 350) % 360;
+    return `<div class="t10">
+      <div class="t10-num" aria-hidden="true">${i + 1}</div>
+      <div class="t10-card" style="background: linear-gradient(170deg, hsl(${hue} 70% 32%), hsl(${hue} 60% 10%))">
+        <b>${esc(s.name)}</b><small>${esc(s.note)}</small>
+      </div>
+    </div>`;
+  }).join(''))),
+
+  journey: () => row('journey', 'My Journey', `
+    <div class="seasons gutter">
+      <div class="season-bar">
+        <h3 id="seasonTitle"></h3>
+        <label class="season-pick"><span class="sr-only">Choose a season</span>
+          <select id="seasonSelect">${DATA.journey.map((s, i) => `<option value="${i}">${esc(s.season)}</option>`).join('')}</select>
+        </label>
+      </div>
+      <div id="seasonBody"></div>
+    </div>`, false),
+
+  awards: () => row('awards', 'Award-Winning Moments', rail(DATA.awards.map((a) => `
+    <article class="award">
+      <div class="laurel">${ICON.laurel}${esc(a.kicker)}</div>
+      <h3>${esc(a.title)}</h3><p>${esc(a.d)}</p>
+    </article>`).join(''))),
+
+  services: () => row('services', 'Now Booking: Freelance', rail(DATA.services.map((s) => `
+    <article class="award service">
+      <div class="svc-k">${esc(s.k)}</div>
+      <h3>${esc(s.t)}</h3><p>${esc(s.d)}</p>
+      <a class="svc-cta" href="mailto:${esc(DATA.email)}?subject=${encodeURIComponent(s.t)}">Start a project ›</a>
+    </article>`).join(''))),
+
+  about: () => row('about', 'About the Show', `
+    <div class="about gutter">
+      <div>${DATA.about.map((p) => `<p>${esc(p)}</p>`).join('')}
+        <div class="process">${DATA.process.map((s) => `<div><b>${esc(s.k)}</b><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p></div>`).join('')}</div>
+      </div>
+      <dl>
+        <dt>Starring</dt><dd class="starring">${DATA.avatar ? `<img src="${esc(DATA.avatar)}" alt="">` : ''}${esc(DATA.name)}</dd>
+        <dt>Role</dt><dd>${esc(DATA.role)}</dd>
+        <dt>Based in</dt><dd>${esc(DATA.location)}</dd>
+        <dt>Genres</dt><dd>${DATA.genres.map(esc).join(', ')}</dd>
+        <dt>This show is</dt><dd><div class="cast">${DATA.cast.map((c) => `<span>${esc(c)}</span>`).join('')}</div></dd>
+      </dl>
+    </div>`, false),
+};
+
+// One colour per season (crimson, amber, blue), so every episode in a season matches.
+const SEASON_PALETTES = [['#2a0610', '#a3122a'], ['#241203', '#a8620c'], ['#03192e', '#1a5fa8']];
+function renderSeason(i) {
+  const s = DATA.journey[i];
+  $('#seasonSelect').value = String(i);
+  $('#seasonTitle').innerHTML = `${esc(s.season)}: <span>${esc(s.title)}</span>`;
+  const pal = SEASON_PALETTES[i % SEASON_PALETTES.length];
+  $('#seasonBody').innerHTML = `<p class="season-desc">${esc(s.desc)}</p>` +
+    `<div class="episodes">` + s.episodes.map((e, n) => {
+      const proj = e.project && DATA.projects.find((x) => x.id === e.project);
+      const thumb = proj
+        ? epThumb(proj.palette, n, `<span class="ep-motif" style="color:${proj.palette[2]}">${MOTIF[proj.motif]}</span>`)
+        : epThumb(pal, n, `<span class="ep-tag">${esc(e.tag || e.t.split(/[ ,]/)[0])}</span>`);
+      const tagName = proj ? 'button' : 'div';
+      return `
+      <${tagName} class="episode"${proj ? ` type="button" data-project="${proj.id}" aria-label="${esc(e.t)}: open details"` : ''}>
+        <div class="ep-n">${n + 1}</div>
+        ${thumb}
+        <div><div class="ep-head">${esc(e.t)}<span>${esc(e.when)}</span></div><p>${esc(e.d)}</p></div>
+      </${tagName}>`;
+    }).join('') + `</div>`;
+}
+
+/* My List: visitors can save Originals; kept in this browser only. */
+let myList = [];
+try { myList = JSON.parse(localStorage.getItem('series-mylist') || '[]').filter((id) => DATA.projects.some((p) => p.id === id)); } catch {}
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5 9-10"/></svg>';
+function addBtn(id) {
+  const on = myList.includes(id);
+  return `<span class="circle${on ? ' added' : ''}" role="button" tabindex="0" data-add="${id}" aria-label="${on ? 'Remove from' : 'Add to'} My List">${on ? CHECK : ICON.plus}</span>`;
+}
+function myListRow() {
+  if (!myList.length) return '';
+  const cards = myList.map((id) => DATA.projects.find((p) => p.id === id)).map((p) => `
+    <button class="card" data-project="${p.id}" aria-label="${esc(p.title)}: open details">${posterArt(p)}</button>`).join('');
+  return row('mylist', 'My List', rail(cards), false).replace('class="row reveal"', 'class="row reveal in"');
+}
+function toggleList(id) {
+  const had = myList.includes(id);
+  myList = had ? myList.filter((x) => x !== id) : [...myList, id];
+  try { localStorage.setItem('series-mylist', JSON.stringify(myList)); } catch {}
+  document.querySelectorAll(`[data-add="${id}"]`).forEach((el) => { el.outerHTML = addBtn(id); });
+  // Swap the My List row in place, keeping the visible content steady.
+  const before = document.documentElement.scrollHeight;
+  const slot = $('#mylistSlot');
+  const anchorAbove = slot.getBoundingClientRect().top < 0;
+  slot.innerHTML = myListRow();
+  if (anchorAbove) window.scrollBy(0, document.documentElement.scrollHeight - before);
+  const p = DATA.projects.find((x) => x.id === id);
+  toast(had ? `Removed ${p.title} from My List` : `Added ${p.title} to My List`);
+}
+
+/* Hover preview: like a streaming row, the hovered card grows into a floating panel above the row.
+   It lives outside the scrolling rail so nothing gets clipped and the row never changes height. */
+const canHover = matchMedia('(hover: hover) and (pointer: fine)');
+const PV_SCALE = 1.55;
+let pvTimer = 0, pvCard = null;
+function showPreview(card) {
+  const p = DATA.projects.find((x) => x.id === card.dataset.project);
+  const pv = $('#preview');
+  const r = card.getBoundingClientRect();
+  const w = Math.round(r.width * PV_SCALE);
+  const gutter = 12;
+  const left = Math.min(Math.max(r.left + r.width / 2 - w / 2, gutter), innerWidth - gutter - w);
+  const posterH = w * 9 / 16;
+  const top = Math.max(r.top + r.height / 2 - posterH / 2, 76);
+  pv.innerHTML = `${posterArt(p)}
+    <div class="pv-body">
+      <div class="circle-btns">
+        <span class="circle fill" data-open role="button" tabindex="0" aria-label="Open ${esc(p.title)}">${ICON.play}</span>
+        ${addBtn(p.id)}
+        <span class="circle" data-like role="button" tabindex="0" aria-label="Like">${ICON.like}</span>
+        <span class="circle more" data-open role="button" tabindex="0" aria-label="More info">${ICON.down}</span>
+      </div>
+      <div class="meta"><span>Original</span><span class="badge">U/A 13+</span><span>${esc(p.year)}</span><span class="badge sm">HD</span></div>
+      <div class="tags">${p.genre.map((g) => `<span>${esc(g)}</span>`).join('')}</div>
+    </div>`;
+  pv.dataset.project = p.id;
+  pv.style.width = `${w}px`;
+  pv.style.left = `${left + scrollX}px`;
+  pv.style.top = `${top + scrollY}px`;
+  // Grow out of the card's position, like the real thing.
+  pv.style.transformOrigin = `${r.left + r.width / 2 - left}px ${r.top + r.height / 2 - top}px`;
+  pv.classList.remove('on'); void pv.offsetWidth; pv.classList.add('on');
+  pvCard?.classList.remove('previewing');
+  pvCard = card; card.classList.add('previewing');
+}
+function hidePreview() {
+  clearTimeout(pvTimer);
+  $('#preview').classList.remove('on');
+  pvCard?.classList.remove('previewing');
+  pvCard = null;
+}
+$('#rows').addEventListener('mouseover', (e) => {
+  if (!canHover.matches) return;
+  const card = e.target.closest('.card[data-project]');
+  if (!card || card === pvCard) return;
+  clearTimeout(pvTimer);
+  pvTimer = setTimeout(() => showPreview(card), pvCard ? 120 : 380);
+});
+$('#rows').addEventListener('mouseout', (e) => {
+  const card = e.target.closest('.card[data-project]');
+  if (!card) return;
+  const to = e.relatedTarget;
+  if (to && (card.contains(to) || $('#preview').contains(to))) return;
+  clearTimeout(pvTimer);
+  if (card === pvCard && !$('#preview').contains(to)) hidePreview();
+});
+$('#preview').addEventListener('mouseleave', (e) => {
+  if (e.relatedTarget && pvCard?.contains(e.relatedTarget)) return;
+  hidePreview();
+});
+$('#preview').addEventListener('click', (e) => {
+  const id = $('#preview').dataset.project;
+  const add = e.target.closest('[data-add]');
+  if (add) return toggleList(add.dataset.add);
+  if (e.target.closest('[data-like]')) return toast('Thanks for the thumbs up!');
+  hidePreview();
+  openProject(id);
+});
+// Capture phase also catches the rails' own sideways scrolling.
+document.addEventListener('scroll', () => { if (pvCard) hidePreview(); }, { passive: true, capture: true });
+addEventListener('resize', hidePreview);
+
+function numbersStrip() {
+  return `<section class="numbers gutter reveal" aria-label="By the numbers">${DATA.numbers.map((n) => `
+    <div class="num"><b data-to="${n.to}" data-pre="${esc(n.pre || '')}" data-suf="${esc(n.suf || '')}">${esc(n.pre || '')}${n.to.toLocaleString('en-IN')}${esc(n.suf || '')}</b><span>${esc(n.l)}</span></div>`).join('')}
+  </section>`;
+}
+
+function renderRows() {
+  $('#rows').innerHTML = numbersStrip() + `<div id="mylistSlot">${myListRow()}</div>` + profile.order.map((k) => SECTIONS[k]()).join('');
+  if (DATA.journey.length) renderSeason(0);
+  observeReveals();
+  updateSkip();
+}
+
+$('#rows').addEventListener('change', (e) => {
+  if (e.target.id === 'seasonSelect') renderSeason(+e.target.value);
+});
+$('#rows').addEventListener('keydown', (e) => {
+  const add = e.target.closest('[data-add]');
+  if (add && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); toggleList(add.dataset.add); }
+});
+$('#rows').addEventListener('click', (e) => {
+  const add = e.target.closest('[data-add]');
+  if (add) { e.stopPropagation(); return toggleList(add.dataset.add); }
+  const explore = e.target.closest('[data-explore]');
+  if (explore) { hidePreview(); return openBrowse(explore.closest('.row')); }
+  const arrow = e.target.closest('.rail-arrow');
+  if (arrow) {
+    const r = arrow.parentElement.querySelector('.rail');
+    r.scrollBy({ left: (arrow.classList.contains('l') ? -1 : 1) * r.clientWidth * 0.85, behavior: 'smooth' });
+    return;
+  }
+  const card = e.target.closest('[data-project]');
+  if (card) return openProject(card.dataset.project);
+
+});
+
+/* ================================ Modal =============================== */
+let lastFocus = null;
+function openProject(id) {
+  const p = DATA.projects.find((x) => x.id === id);
+  lastFocus = document.activeElement;
+  $('#modal').innerHTML = `
+    <div style="position:relative">
+      <button class="modal-close" id="modalClose" aria-label="Close">${ICON.close}</button>
+      ${posterArt(p, true)}
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="meta"><span class="match">${match(p.id)}% Match</span><span>${p.year}</span><span class="badge">HD</span>${p.isNew ? '<span class="badge" style="border-color:var(--red);color:var(--red-2)">NEW</span>' : ''}</div>
+        <p style="font-size:18px">${esc(p.logline)}</p>
+        <p style="color:var(--mist)">${esc(p.details)}</p>
+      </div>
+      <div class="side">
+        <div><b>Cast (stack):</b> ${p.stack.map(esc).join(', ')}</div>
+        <div><b>Genres:</b> ${p.genre.map(esc).join(', ')}</div>
+        <div><b>Format:</b> ${esc(p.kind)}</div>
+      </div>
+    </div>
+    ${p.stats?.length ? `<div class="stats">${p.stats.map((s) => `<div class="stat"><b>${esc(s.v)}</b><span>${esc(s.l)}</span></div>`).join('')}</div>` : ''}
+    <h4>Episodes</h4>
+    <div class="modal-eps episodes">${p.episodes.map((e, n) => `
+      <button class="episode" type="button" data-ep="${n}">
+        <div class="ep-n">${n + 1}</div>
+        ${epThumb(p.palette, n, `<span class="ep-motif" style="color:${p.palette[2]}">${MOTIF[p.motif]}</span>`)}
+        <div><div class="ep-head">${esc(e)}</div><div class="ep-sub">${p.link ? (p.link.includes('github.com') ? 'See the code' : 'Watch it live') : 'Ask me for the walkthrough'}</div></div>
+      </button>`).join('')}</div>`;
+  $('#modal').dataset.project = p.id;
+  $('#modalBack').classList.add('show');
+  document.body.classList.add('locked');
+  $('#modalClose').focus();
+}
+function closeModal() {
+  $('#modalBack').classList.remove('show');
+  syncLock();
+  lastFocus?.focus?.({ preventScroll: true });
+}
+$('#modalBack').addEventListener('click', (e) => {
+  if (e.target.id === 'modalBack' || e.target.closest('#modalClose')) return closeModal();
+  const add = e.target.closest('[data-add]');
+  if (add) return toggleList(add.dataset.add);
+  if (e.target.closest('[data-like]')) return toast('Thanks for the thumbs up!');
+  if (e.target.closest('[data-soon]')) return toast('Live link coming soon. Email me for a demo.');
+  const ep = e.target.closest('[data-ep]');
+  if (ep) {
+    const p = DATA.projects.find((x) => x.id === $('#modal').dataset.project);
+    if (p.link) return window.open(p.link, '_blank', 'noopener');
+    return toast(`Want the full story on "${p.episodes[+ep.dataset.ep]}"? Email ${DATA.email}`);
+  }
+});
+
+/* Episode thumbnail: the show's palette lit from a different corner each episode, with a big faint number. */
+function epThumb(palette, n, label) {
+  const spots = ['100% 0%', '0% 100%', '80% 100%', '20% 0%', '50% 50%'];
+  return `<div class="ep-thumb" style="background: radial-gradient(130% 130% at ${spots[n % spots.length]}, ${palette[1]} 0%, ${palette[0]} 55%, #08080b 100%)">
+    <span class="ep-big" aria-hidden="true">${label}</span><span class="ep-play">${ICON.play}</span></div>`;
+}
+$('#infoBtn').addEventListener('click', () => openProject(DATA.projects[0].id));
+
+/* ============================== Play reel ============================= */
+let reelI = 0, reelTimer = null;
+const REEL_MS = 4200;
+function openReel() {
+  $('#reelBars').innerHTML = DATA.reel.map(() => '<span><i></i></span>').join('');
+  $('#reelSlides').innerHTML = DATA.reel.map((s, n) => `<div class="reel-slide"><div>${n === 0 && DATA.photo ? `<img class="reel-photo" src="${esc(DATA.photo)}" alt="">` : ''}<div class="kicker">${esc(s.k)}</div><h2>${esc(s.h)}</h2><p>${esc(s.p)}</p></div></div>`).join('');
+  $('#reel').classList.add('show');
+  document.body.classList.add('locked');
+  showSlide(0);
+  $('#reelClose').focus();
+}
+function showSlide(i) {
+  if (i >= DATA.reel.length) return closeReel();
+  reelI = Math.max(0, i);
+  document.querySelectorAll('.reel-slide').forEach((el, n) => el.classList.toggle('on', n === reelI));
+  document.querySelectorAll('.reel-bars i').forEach((bar, n) => {
+    bar.style.transition = 'none';
+    bar.style.width = n < reelI ? '100%' : '0';
+    if (n === reelI) requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transition = `width ${REEL_MS}ms linear`; bar.style.width = '100%'; }));
+  });
+  $('#reelCount').textContent = `${reelI + 1} / ${DATA.reel.length}`;
+  clearTimeout(reelTimer);
+  reelTimer = setTimeout(() => showSlide(reelI + 1), REEL_MS);
+}
+function closeReel() {
+  clearTimeout(reelTimer);
+  $('#reel').classList.remove('show');
+  syncLock();
+  $('#playBtn').focus({ preventScroll: true });
+}
+$('#playBtn').addEventListener('click', openReel);
+$('#reelClose').addEventListener('click', closeReel);
+$('#reelNext').addEventListener('click', () => showSlide(reelI + 1));
+$('#reelPrev').addEventListener('click', () => showSlide(reelI - 1));
+
+document.addEventListener('keydown', (e) => {
+  if ($('#reel').classList.contains('show')) {
+    if (e.key === 'Escape') closeReel();
+    if (e.key === 'ArrowRight') showSlide(reelI + 1);
+    if (e.key === 'ArrowLeft') showSlide(reelI - 1);
+  } else if (e.key === 'Escape' && $('#modalBack').classList.contains('show')) closeModal();
+  else if (e.key === 'Escape' && $('#browse').classList.contains('show')) closeBrowse();
+});
+
+/* Explore all → its own full-screen page with every item in the row as a grid. */
+let browseFrom = null;
+function openBrowse(row) {
+  browseFrom = row.querySelector('[data-explore]');
+  const n = row.querySelector('.rail').children.length;
+  $('#browseTitle').textContent = row.querySelector('h2').textContent;
+  $('#browseSub').textContent = `${n} title${n === 1 ? '' : 's'}`;
+  $('#browseGrid').innerHTML = row.querySelector('.rail').innerHTML;
+  $('#browse').classList.add('show');
+  $('#browse').scrollTop = 0;
+  syncLock();
+  $('#browseBack').focus();
+  history.pushState({ browse: true }, '');
+}
+function closeBrowse(fromHistory = false) {
+  if (!$('#browse').classList.contains('show')) return;
+  $('#browse').classList.remove('show');
+  syncLock();
+  browseFrom?.focus({ preventScroll: true });
+  if (!fromHistory && history.state?.browse) history.back();
+}
+// The browser's back button closes the browse page instead of leaving the site.
+addEventListener('popstate', () => closeBrowse(true));
+$('#browseBack').addEventListener('click', () => closeBrowse());
+$('#browseClose').addEventListener('click', () => closeBrowse());
+$('#browseGrid').addEventListener('click', (e) => {
+  const add = e.target.closest('[data-add]');
+  if (add) return toggleList(add.dataset.add);
+  const card = e.target.closest('[data-project]');
+  if (card) openProject(card.dataset.project);
+});
+function syncLock() {
+  const open = ['#modalBack', '#reel', '#browse'].some((s) => $(s).classList.contains('show'));
+  document.body.classList.toggle('locked', open);
+}
+
+$('#replayBtn').addEventListener('click', () => { window.scrollTo(0, 0); startOpening(); });
+
+/* =========================== Scroll effects =========================== */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+addEventListener('scroll', () => { $('#nav').classList.toggle('solid', scrollY > 40); updateSkip(); }, { passive: true });
+let io;
+function observeReveals() {
+  io?.disconnect();
+  io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (en.isIntersecting) { en.target.classList.add('in'); countUp(en.target); io.unobserve(en.target); }
+  }), { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+}
+
+function countUp(scope) {
+  scope.querySelectorAll('[data-to]').forEach((el) => {
+    const to = +el.dataset.to, pre = el.dataset.pre, suf = el.dataset.suf;
+    // Tiny values like "#1" or "2×" read oddly mid-count ("#0"), so only count the big ones.
+    if (reduceMotion || to <= 10) return;
+    const t0 = performance.now(), dur = 1400;
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / dur), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+      el.textContent = `${pre}${v.toLocaleString('en-IN')}${suf}`;
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+/* Skip Intro → Next Episode → Hire me: one floating button that walks the page. */
+const ARROW = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l9 8-9 8zM15 4h3v16h-3z"/></svg>';
+function updateSkip() {
+  const btn = $('#skipBtn');
+  if (!profile) return;
+  const sections = [...document.querySelectorAll('#rows > .row, #mylistSlot > .row')].sort((a, b) => a.offsetTop - b.offsetTop);
+  const line = scrollY + innerHeight * 0.35;
+  let label, target;
+  if (scrollY < innerHeight * 0.45) {
+    label = 'Skip Intro'; target = sections[0];
+  } else {
+    target = sections.find((s) => s.offsetTop > line);
+    label = target ? 'Next Episode' : null;
+  }
+  if (!target) {
+    const contact = $('#contact');
+    if (contact.getBoundingClientRect().top < innerHeight * 0.8) { btn.classList.remove('on'); return; }
+    label = `Hire ${DATA.short}`; target = contact;
+  }
+  const title = target.id === 'contact' ? '' : target.querySelector('h2')?.textContent || '';
+  btn.innerHTML = `${ARROW}${label}${title && label !== 'Skip Intro' ? `<small>${esc(title)}</small>` : ''}`;
+  btn.dataset.target = target.id;
+  btn.classList.add('on');
+}
+$('#skipBtn').addEventListener('click', () => {
+  const t = document.getElementById($('#skipBtn').dataset.target);
+  t?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+});
+
+/* Typewriter role line under the name. */
+function startTyper() {
+  const el = $('#typer'), words = DATA.typer;
+  if (reduceMotion) { el.innerHTML = `<b>${esc(words[0])}</b>`; return; }
+  let w = 0, i = 0, del = false;
+  const tick = () => {
+    const word = words[w];
+    i += del ? -1 : 1;
+    el.innerHTML = `<b>${esc(word.slice(0, i))}</b>`;
+    let wait = del ? 40 : 85;
+    if (!del && i === word.length) { del = true; wait = 1800; }
+    else if (del && i === 0) { del = false; w = (w + 1) % words.length; wait = 350; }
+    setTimeout(tick, wait);
+  };
+  tick();
+}
+
+function renderPhoto() {
+  if (DATA.photo) $('#heroPhoto').innerHTML = `<img src="${esc(DATA.photo)}" alt="${esc(DATA.name)}" decoding="async">`;
+  if (DATA.avatar) $('#contact').insertAdjacentHTML('afterbegin', `<img class="still-avatar" src="${esc(DATA.avatar)}" alt="${esc(DATA.name)}">`);
+}
+
+/* ================================ Boot ================================ */
+renderStatic();
+renderPhoto();
+startTyper();
+let stored = null;
+try { stored = sessionStorage.getItem('series-profile'); } catch {}
+if (stored && DATA.profiles.some((p) => p.id === stored)) pickProfile(stored);
+else startOpening();
+</script>
+</body>
+</html>
